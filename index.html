@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEON GYM</title>
+
+  <style>
+    :root {
+      --neon: #39ff14;
+      --black: #050505;
+      --card: #101010;
+      --gray: #999;
+      --red: #ff3c3c;
+      --yellow: #ffb000;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Tahoma, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: white;
+      background:
+        radial-gradient(circle at top, rgba(57, 255, 20, .12), transparent 35%),
+        var(--black);
+    }
+
+    header {
+      text-align: center;
+      padding: 35px 15px;
+      border-bottom: 1px solid rgba(57, 255, 20, .25);
+    }
+
+    .logo {
+      color: var(--neon);
+      font-size: clamp(38px, 9vw, 75px);
+      font-weight: 900;
+      letter-spacing: 8px;
+      text-shadow:
+        0 0 5px var(--neon),
+        0 0 15px var(--neon),
+        0 0 35px var(--neon);
+      animation: neonPulse 2s infinite alternate;
+    }
+
+    .subtitle {
+      margin-top: 12px;
+      color: #c8ffc0;
+    }
+
+    @keyframes neonPulse {
+      from {
+        filter: brightness(.8);
+      }
+
+      to {
+        filter: brightness(1.4);
+      }
+    }
+
+    main {
+      width: min(1200px, 94%);
+      margin: 30px auto;
+    }
+
+    .section-title {
+      color: var(--neon);
+      margin: 22px 0 16px;
+      text-shadow: 0 0 10px var(--neon);
+    }
+
+    .programs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 12px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+      transition: .25s;
+    }
+
+    .program-btn,
+    .day-btn {
+      color: var(--neon);
+      background: var(--card);
+      border: 1px solid #248b20;
+      border-radius: 10px;
+      padding: 14px 10px;
+    }
+
+    .program-btn:hover,
+    .program-btn.active,
+    .day-btn:hover,
+    .day-btn.active {
+      color: #000;
+      background: var(--neon);
+      box-shadow: 0 0 17px rgba(57, 255, 20, .7);
+      transform: translateY(-3px);
+    }
+
+    .days {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .day-btn {
+      padding: 11px 18px;
+    }
+
+    .workout-header {
+      margin: 28px 0 20px;
+      padding: 22px;
+      border-radius: 15px;
+      border: 1px solid rgba(57, 255, 20, .5);
+      background: linear-gradient(135deg, #111, #182718);
+    }
+
+    .workout-header h2 {
+      color: var(--neon);
+      margin-bottom: 8px;
+      text-shadow: 0 0 8px var(--neon);
+    }
+
+    .workout-header p {
+      color: var(--gray);
+    }
+
+    .dynamic-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) 1.5fr 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 18px;
+      margin: 22px 0;
+      border: 1px solid rgba(57, 255, 20, .5);
+      border-radius: 15px;
+      background: linear-gradient(135deg, #0e0e0e, #142414);
+    }
+
+    .dynamic-panel div {
+      text-align: center;
+    }
+
+    .dynamic-panel span {
+      display: block;
+      color: var(--gray);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .dynamic-panel strong {
+      display: block;
+      color: var(--neon);
+      font-size: 25px;
+      text-shadow: 0 0 8px var(--neon);
+    }
+
+    .rest-button {
+      padding: 12px;
+      color: #000;
+      background: var(--neon);
+      border: 1px solid var(--neon);
+      border-radius: 8px;
+    }
+
+    .rest-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--neon);
+    }
+
+    #restTimer {
+      color: var(--neon);
+      font-size: 25px;
+      font-weight: bold;
+      direction: ltr;
+      text-shadow: 0 0 8px var(--neon);
+    }
+
+    .exercise-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .exercise-card {
+      padding: 20px;
+      border: 1px solid #263526;
+      border-radius: 14px;
+      background: var(--card);
+      opacity: 0;
+      transform: translateY(25px);
+      animation: cardIn .5s forwards;
+      transition: .3s;
+    }
+
+    .exercise-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--neon);
+      box-shadow: 0 0 20px rgba(57, 255, 20, .25);
+    }
+
+    @keyframes cardIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .exercise-card h3 {
+      margin-bottom: 6px;
+      font-size: 20px;
+    }
+
+    .exercise-card small {
+      color: var(--neon);
+    }
+
+    .sets {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .set-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .set-number {
+      color: var(--neon);
+      font-weight: bold;
+    }
+
+    .input-label {
+      display: block;
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      color: white;
+      background: #070707;
+      border: 1px solid #355a35;
+      border-radius: 7px;
+      outline: none;
+      direction: rtl;
+      transition: .25s;
+    }
+
+    input:focus,
+    input:valid:not(:placeholder-shown) {
+      border-color: var(--neon);
+      box-shadow: 0 0 8px rgba(57, 255, 20, .5);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .action-btn {
+      padding: 13px 20px;
+      color: #000;
+      background: var(--neon);
+      border: none;
+      border-radius: 8px;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px var(--neon);
+    }
+
+    .clear-btn {
+      color: white;
+      background: var(--red);
+    }
+
+    .empty {
+      padding: 40px;
+      color: var(--gray);
+      text-align: center;
+      border: 1px dashed #355a35;
+      border-radius: 12px;
+    }
+
+    #toast {
+      position: fixed;
+      left: 25px;
+      bottom: 25px;
+      z-index: 9999;
+      padding: 15px 22px;
+      color: #000;
+      background: var(--neon);
+      border-radius: 8px;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: .3s;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #toast.warning {
+      background: var(--yellow);
+    }
+
+    footer {
+      padding: 35px 10px;
+      color: #777;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .dynamic-panel {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .set-row {
+        grid-template-columns: 65px 1fr 1fr;
+        gap: 7px;
+      }
+
+      .exercise-card {
+        padding: 15px;
+      }
+
+      input {
+        padding: 10px 7px;
+        font-size: 13px;
+      }
+
+      .set-number {
+        font-size: 13px;
+      }
+
+      #toast {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">NEON GYM</div>
+    <div class="subtitle">سجل تمرينك وطور مستواك كل يوم</div>
+  </header>
+
+  <main>
+    <h2 class="section-title">اختار نظام التمرين</h2>
+    <div class="programs" id="programs"></div>
+
+    <h2 class="section-title">اختار يوم التمرين</h2>
+    <div class="days" id="days"></div>
+
+    <section class="workout-header">
+      <h2 id="workoutTitle">اختار نظام تمرين</h2>
+      <p id="workoutDescription">
+        اختر أحد الأنظمة لعرض أيام التمرين والتمارين الخاصة به.
+      </p>
+    </section>
+
+    <div class="dynamic-panel">
+      <div>
+        <span>التمارين</span>
+        <strong id="exerciseCounter">0</strong>
+      </div>
+
+      <div>
+        <span>المجموعات</span>
+        <strong id="setsCounter">0</strong>
+      </div>
+
+      <div>
+        <span>الإنجاز</span>
+        <strong id="progressCounter">0%</strong>
+      </div>
+
+      <button class="rest-button" onclick="startRestTimer()">
+        وقت الراحة
+      </button>
+
+      <div id="restTimer">01:00</div>
+    </div>
+
+    <div class="exercise-list" id="exerciseList">
+      <div class="empty">
+        اختار نظام تمرين من الأعلى للبدء
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn" onclick="saveWorkout()">
+        حفظ التمرين
+      </button>
+
+      <button class="action-btn clear-btn" onclick="clearWorkout()">
+        مسح بيانات اليوم
+      </button>
+    </div>
+  </main>
+
+  <div id="toast"></div>
+
+  <footer>
+    NEON GYM © 2026 - Train Hard, Stay Strong
+  </footer>
+
+  <script>
+    const workoutPrograms = {
+      "PPLUL": {
+        name: "PPLUL",
+        description: "Push - Pull - Legs - Upper - Lower",
+        days: {
+          "Push": [
+            ["Bench Press", "صدر"],
+            ["Incline Dumbbell Press", "صدر علوي"],
+            ["Shoulder Press", "أكتاف"],
+            ["Lateral Raises", "أكتاف جانبي"],
+            ["Triceps Pushdown", "ترايسبس"]
+          ],
+          "Pull": [
+            ["Lat Pulldown", "ظهر"],
+            ["Barbell Row", "ظهر"],
+            ["Seated Cable Row", "ظهر"],
+            ["Face Pull", "أكتاف خلفي"],
+            ["Barbell Curl", "بايسبس"]
+          ],
+          "Legs": [
+            ["Squat", "أرجل"],
+            ["Leg Press", "أرجل"],
+            ["Leg Extension", "أمام الفخذ"],
+            ["Leg Curl", "خلف الفخذ"],
+            ["Standing Calf Raise", "سمانة"]
+          ],
+          "Upper": [
+            ["Bench Press", "صدر"],
+            ["Barbell Row", "ظهر"],
+            ["Shoulder Press", "أكتاف"],
+            ["Lat Pulldown", "ظهر"],
+            ["Dumbbell Curl", "بايسبس"],
+            ["Triceps Pushdown", "ترايسبس"]
+          ],
+          "Lower": [
+            ["Deadlift", "ظهر وخلف الفخذ"],
+            ["Squat", "أرجل"],
+            ["Leg Press", "أرجل"],
+            ["Leg Curl", "خلف الفخذ"],
+            ["Calf Raise", "سمانة"]
+          ]
+        }
+      },
+
+      "PPL": {
+        name: "PPL",
+        description: "Push - Pull - Legs",
+        days: {
+          "Push": [
+            ["Bench Press", "صدر"],
+            ["Incline Bench Press", "صدر علوي"],
+            ["Dumbbell Shoulder Press", "أكتاف"],
+            ["Lateral Raises", "أكتاف جانبي"],
+            ["Skull Crushers", "ترايسبس"],
+            ["Triceps Pushdown", "ترايسبس"]
+          ],
+          "Pull": [
+            ["Deadlift", "ظهر"],
+            ["Pull Ups", "ظهر"],
+            ["Barbell Row", "ظهر"],
+            ["Face Pull", "أكتاف خلفي"],
+            ["Barbell Curl", "بايسبس"],
+            ["Hammer Curl", "بايسبس"]
+          ],
+          "Legs": [
+            ["Squat", "أرجل"],
+            ["Romanian Deadlift", "خلف الفخذ"],
+            ["Leg Press", "أرجل"],
+            ["Leg Extension", "أمام الفخذ"],
+            ["Leg Curl", "خلف الفخذ"],
+            ["Calf Raise", "سمانة"]
+          ]
+        }
+      },
+
+      "Upper Lower": {
+        name: "UPPER / LOWER",
+        description: "تقسيم الجزء العلوي والسفلي",
+        days: {
+          "Upper A": [
+            ["Bench Press", "صدر"],
+            ["Barbell Row", "ظهر"],
+            ["Overhead Press", "أكتاف"],
+            ["Lat Pulldown", "ظهر"],
+            ["Barbell Curl", "بايسبس"],
+            ["Triceps Pushdown", "ترايسبس"]
+          ],
+          "Lower A": [
+            ["Squat", "أرجل"],
+            ["Romanian Deadlift", "خلف الفخذ"],
+            ["Leg Press", "أرجل"],
+            ["Leg Curl", "خلف الفخذ"],
+            ["Calf Raise", "سمانة"]
+          ],
+          "Upper B": [
+            ["Incline Dumbbell Press", "صدر علوي"],
+            ["Pull Ups", "ظهر"],
+            ["Dumbbell Shoulder Press", "أكتاف"],
+            ["Cable Row", "ظهر"],
+            ["Dumbbell Curl", "بايسبس"],
+            ["Skull Crushers", "ترايسبس"]
+          ],
+          "Lower B": [
+            ["Deadlift", "ظهر وخلف الفخذ"],
+            ["Front Squat", "أمام الفخذ"],
+            ["Bulgarian Split Squat", "أرجل"],
+            ["Leg Extension", "أمام الفخذ"],
+            ["Seated Calf Raise", "سمانة"]
+          ]
+        }
+      },
+
+      "Full Body": {
+        name: "FULL BODY",
+        description: "تمرين كامل للجسم",
+        days: {
+          "Full Body A": [
+            ["Squat", "أرجل"],
+            ["Bench Press", "صدر"],
+            ["Barbell Row", "ظهر"],
+            ["Shoulder Press", "أكتاف"],
+            ["Barbell Curl", "بايسبس"],
+            ["Triceps Pushdown", "ترايسبس"]
+          ],
+          "Full Body B": [
+            ["Deadlift", "ظهر وخلف الفخذ"],
+            ["Incline Press", "صدر علوي"],
+            ["Pull Ups", "ظهر"],
+            ["Lateral Raises", "أكتاف"],
+            ["Leg Curl", "خلف الفخذ"],
+            ["Calf Raise", "سمانة"]
+          ],
+          "Full Body C": [
+            ["Leg Press", "أرجل"],
+            ["Dumbbell Press", "صدر"],
+            ["Cable Row", "ظهر"],
+            ["Lunges", "أرجل"],
+            ["Dumbbell Curl", "بايسبس"],
+            ["Dips", "ترايسبس"]
+          ]
+        }
+      },
+
+      "Arnold Split": {
+        name: "ARNOLD SPLIT",
+        description: "Chest/Back - Shoulders/Arms - Legs",
+        days: {
+          "Chest & Back": [
+            ["Bench Press", "صدر"],
+            ["Incline Dumbbell Press", "صدر علوي"],
+            ["Pull Ups", "ظهر"],
+            ["Barbell Row", "ظهر"],
+            ["Cable Crossover", "صدر"],
+            ["Seated Cable Row", "ظهر"]
+          ],
+          "Shoulders & Arms": [
+            ["Shoulder Press", "أكتاف"],
+            ["Lateral Raises", "أكتاف جانبي"],
+            ["Barbell Curl", "بايسبس"],
+            ["Hammer Curl", "بايسبس"],
+            ["Skull Crushers", "ترايسبس"],
+            ["Triceps Pushdown", "ترايسبس"]
+          ],
+          "Legs": [
+            ["Squat", "أرجل"],
+            ["Leg Press", "أرجل"],
+            ["Romanian Deadlift", "خلف الفخذ"],
+            ["Leg Extension", "أمام الفخذ"],
+            ["Leg Curl", "خلف الفخذ"],
+            ["Calf Raise", "سمانة"]
+          ]
+        }
+      }
+    };
+
+    let currentProgram = "";
+    let currentDay = "";
+    let restInterval;
+    let restSeconds = 60;
+
+    const programsContainer = document.getElementById("programs");
+    const daysContainer = document.getElementById("days");
+    const exerciseList = document.getElementById("exerciseList");
+    const workoutTitle = document.getElementById("workoutTitle");
+    const workoutDescription =
+      document.getElementById("workoutDescription");
+
+    function createProgramButtons() {
+      programsContainer.innerHTML = "";
+
+      Object.keys(workoutPrograms).forEach(programKey => {
+        const button = document.createElement("button");
+
+        button.className = "program-btn";
+        button.textContent = workoutPrograms[programKey].name;
+
+        button.onclick = () => {
+          currentProgram = programKey;
+          currentDay = "";
+
+          document.querySelectorAll(".program-btn")
+            .forEach(btn => btn.classList.remove("active"));
+
+          button.classList.add("active");
+
+          createDayButtons();
+
+          exerciseList.innerHTML = `
+            <div class="empty">
+              اختار يوم التمرين لعرض التمارين
+            </div>
+          `;
+
+          workoutTitle.textContent =
+            workoutPrograms[programKey].name;
+
+          workoutDescription.textContent =
+            workoutPrograms[programKey].description;
+
+          updateWorkoutStats();
+        };
+
+        programsContainer.appendChild(button);
+      });
+    }
+
+    function createDayButtons() {
+      daysContainer.innerHTML = "";
+
+      const days = workoutPrograms[currentProgram].days;
+
+      Object.keys(days).forEach(day => {
+        const button = document.createElement("button");
+
+        button.className = "day-btn";
+        button.textContent = day;
+
+        button.onclick = () => {
+          currentDay = day;
+
+          document.querySelectorAll(".day-btn")
+            .forEach(btn => btn.classList.remove("active"));
+
+          button.classList.add("active");
+
+          renderExercises();
+        };
+
+        daysContainer.appendChild(button);
+      });
+    }
+
+    function renderExercises() {
+      const exercises =
+        workoutPrograms[currentProgram].days[currentDay];
+
+      workoutTitle.textContent =
+        `${workoutPrograms[currentProgram].name} - ${currentDay}`;
+
+      workoutDescription.textContent =
+        "سجل الوزن والعدات لكل مجموعة، وسيتم حفظ البيانات تلقائيًا.";
+
+      exerciseList.innerHTML = "";
+
+      exercises.forEach((exercise, exerciseIndex) => {
+        const card = document.createElement("div");
+        card.className = "exercise-card";
+        card.style.animationDelay = `${exerciseIndex * 100}ms`;
+
+        let setsHTML = "";
+
+        for (let set = 1; set <= 3; set++) {
+          const weightKey =
+            getInputKey(exerciseIndex, set, "weight");
+
+          const repsKey =
+            getInputKey(exerciseIndex, set, "reps");
+
+          setsHTML += `
+            <div class="set-row">
+              <div class="set-number">
+                مجموعة ${set}
+              </div>
+
+              <div>
+                <span class="input-label">الوزن</span>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="مثال: 20"
+                  data-key="${weightKey}"
+                  oninput="saveInput(this)"
+                >
+              </div>
+
+              <div>
+                <span class="input-label">العدات</span>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="مثال: 12"
+                  data-key="${repsKey}"
+                  oninput="saveInput(this)"
+                >
+              </div>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <h3>${exercise[0]}</h3>
+          <small>${exercise[1]}</small>
+          <div class="sets">${setsHTML}</div>
+        `;
+
+        exerciseList.appendChild(card);
+      });
+
+      loadWorkout();
+      updateWorkoutStats();
+    }
+
+    function getStorageKey() {
+      return `neon-gym-${currentProgram}-${currentDay}`;
+    }
+
+    function getInputKey(exerciseIndex, set, type) {
+      return `
+        ${getStorageKey()}-exercise-${exerciseIndex}-set-${set}-${type}
+      `.replace(/\s/g, "");
+    }
+
+    function saveInput(input) {
+      localStorage.setItem(input.dataset.key, input.value);
+      updateWorkoutStats();
+    }
+
+    function loadWorkout() {
+      document.querySelectorAll("input[data-key]")
+        .forEach(input => {
+          const savedValue =
+            localStorage.getItem(input.dataset.key);
+
+          if (savedValue !== null) {
+            input.value = savedValue;
+          }
+        });
+
+      updateWorkoutStats();
+    }
+
+    function updateWorkoutStats() {
+      const cards =
+        document.querySelectorAll(".exercise-card");
+
+      const inputs =
+        document.querySelectorAll(".exercise-card input");
+
+      let completedInputs = 0;
+
+      inputs.forEach(input => {
+        if (input.value.trim() !== "") {
+          completedInputs++;
+        }
+      });
+
+      const progress = inputs.length === 0
+        ? 0
+        : Math.round((completedInputs / inputs.length) * 100);
+
+      document.getElementById("exerciseCounter")
+        .textContent = cards.length;
+
+      document.getElementById("setsCounter")
+        .textContent = cards.length * 3;
+
+      document.getElementById("progressCounter")
+        .textContent = `${progress}%`;
+    }
+
+    function saveWorkout() {
+      document.querySelectorAll("input[data-key")
+        .forEach(input => {
+          localStorage.setItem(input.dataset.key, input.value);
+        });
+
+      showToast("تم حفظ بيانات التمرين بنجاح");
+    }
+
+    function clearWorkout() {
+      if (!currentProgram || !currentDay) {
+        showToast("اختار النظام واليوم أولًا", "warning");
+        return;
+      }
+
+      const exercises =
+        workoutPrograms[currentProgram].days[currentDay];
+
+      exercises.forEach((exercise, exerciseIndex) => {
+        for (let set = 1; set <= 3; set++) {
+          localStorage.removeItem(
+            getInputKey(exerciseIndex, set, "weight")
+          );
+
+          localStorage.removeItem(
+            getInputKey(exerciseIndex, set, "reps")
+          );
+        }
+      });
+
+      document.querySelectorAll("input[data-key")
+        .forEach(input => {
+          input.value = "";
+        });
+
+      updateWorkoutStats();
+      showToast("تم مسح بيانات اليوم", "warning");
+    }
+
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+
+      toast.textContent = message;
+      toast.className = `show ${type}`;
+
+      setTimeout(() => {
+        toast.className = "";
+      }, 2500);
+    }
+
+    function startRestTimer() {
+      clearInterval(restInterval);
+
+      restSeconds = 60;
+      updateTimerText();
+      showToast("بدأ وقت الراحة لمدة دقيقة");
+
+      restInterval = setInterval(() => {
+        restSeconds--;
+        updateTimerText();
+
+        if (restSeconds <= 0) {
+          clearInterval(restInterval);
+          showToast("انتهى وقت الراحة", "warning");
+        }
+      }, 1000);
+    }
+
+    function updateTimerText() {
+      const minutes = Math.floor(restSeconds / 60);
+      const seconds = restSeconds % 60;
+
+      document.getElementById("restTimer").textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    createProgramButtons();
+    updateTimerText();
+  </script>
+
+</body>
+</html>
